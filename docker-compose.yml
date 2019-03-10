@@ -1,0 +1,10 @@
+# docker-compose.yml
+version: '3'
+services:
+  mobilesecurity-docker:
+    build: .
+    image: mobilesecurity-docker:0.1
+    restart: always
+    ports:
+      - "2222:22"
+      - "5901:5901"
