@@ -28,7 +28,7 @@ ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
 RUN apt-get install -y net-tools
 
 # Installing some required softwares
-RUN apt-get install -y unzip wget tar
+RUN apt-get install -y unzip wget tar firefox
 
 # Install and configure supervisor
 RUN apt-get install -y supervisor
@@ -79,6 +79,12 @@ RUN mkdir -p /tools
 
 
 # Install and Setup Android SDK
+
+# Handle "Warning: File /root/.android/repositories.cfg could not be loaded" error
+RUN mkdir -p /root/.android/
+RUN touch /root/.android/repositories.cfg
+
+
 #Downloading SDK https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip
 
 RUN wget -qO /tools/sdk-tools.zip https://dl.google.com/android/repository/sdk-tools-linux-$ANDROID_SDK_VERSION.zip
@@ -89,35 +95,58 @@ RUN rm -f /tools/sdk-tools.zip
 
 # Setup Android Environment variables
 ENV ANDROID_HOME /tools/android-sdk
+ENV ANDROID_ROOT /tools/android-sdk
 ENV PATH $PATH:$ANDROID_HOME/tools
 ENV PATH $PATH:$ANDROID_HOME/platform-tools
-
-
-# Handle "Warning: File /root/.android/repositories.cfg could not be loaded" error
-RUN mkdir -p /root/.android && \
-    touch /root/.android/repositories.cfg
 
 
 # Update the Android SDK
 RUN /tools/android-sdk/tools/bin/sdkmanager --update
 
+# Installing additional ADB dependencies
+RUN apt-get install -y lib32z1 
+
 
 # Install required Android tools (you can choose more from sdkmanager --list)
 # Include echo 'y' | to accept license
+RUN apt-get install -y qemu-kvm libvirt-bin ubuntu-vm-builder bridge-utils
 RUN yes | /tools/android-sdk/tools/bin/sdkmanager --licenses
 RUN echo 'y' | /tools/android-sdk/tools/bin/sdkmanager "build-tools;$ANDROID_BUILD_TOOLS_VERSION"
-RUN echo 'y' | /tools/android-sdk/tools/bin/sdkmanager "emulator" "platform-tools" "tools"  
+RUN echo 'y' | /tools/android-sdk/tools/bin/sdkmanager "emulator" "platform-tools" "tools" 
 
 # Enable only if required
 # RUN /tools/android-sdk/tools/bin/sdkmanager "ndk-bundle" "extras;google;google_play_services" \
 # "extras;android;m2repository" "extras;google;m2repository"
 
 # Setup SDK for running Android API 28
-RUN echo 'y' | /tools/android-sdk/tools/bin/sdkmanager "sources;android-28" \
+RUN echo 'y' | /tools/android-sdk/tools/bin/sdkmanager "platforms;android-28" "sources;android-28" \
 	"system-images;android-28;google_apis;x86"
 
 # Enable only if required
 # RUN echo 'y' | /tools/android-sdk/tools/bin/sdkmanager "system-images;android-28;google_apis;x86_64"
+
+# Creating a new AVD
+RUN echo "no" | /tools/android-sdk/tools/bin/avdmanager create avd -n "Android-API29-x86" --abi google_apis/x86 --package 'system-images;android-28;google_apis;x86' --device "Nexus 5X" --force
+RUN /tools/android-sdk/tools/bin/avdmanager list avd
+
+# Launch the newly created AVD
+#RUN /tools/android-sdk/emulator/emulator -avd "Android-API29-x86" -noaudio -no-boot-anim -gpu off
+
+# Setup and use ARM based device
+RUN /tools/android-sdk/tools/bin/sdkmanager "system-images;android-24;default;armeabi-v7a"
+RUN /tools/android-sdk/tools/bin/sdkmanager "platform-tools" "platforms;android-24" "emulator"
+RUN /tools/android-sdk/tools/bin/sdkmanager "system-images;android-24;default;armeabi-v7a"
+RUN echo "no" | /tools/android-sdk/tools/bin/avdmanager create avd -n armTestDevice1 -k "system-images;android-24;default;armeabi-v7a"
+# /tools/android-sdk/emulator/emulator -avd armTestDevice1 -noaudio -memory 2048 -no-boot-anim -gpu off
+
+ENV QT_XKB_CONFIG_ROOT /usr/share/X11/xkb
+ENV PATH $PATH:$QT_XKB_CONFIG_ROOT
+
+
+
+EXPOSE 5554
+EXPOSE 5555
+EXPOSE 5037
 
 # Setup workdirectory
 RUN mkdir -p /workdirectory
@@ -130,3 +159,7 @@ RUN rm -rf /var/lib/apt/lists/*
 RUN apt-get clean
 RUN apt-get autoremove
 RUN apt-get autoclean
+
+# Setup envt variables
+RUN echo "export PATH=$PATH" >> /etc/profile
+#RUN source /etc/profile
