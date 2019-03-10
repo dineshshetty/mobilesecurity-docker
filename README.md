@@ -4,6 +4,15 @@ WIP Docker Image for Mobile Security Training and Assessments.
 
 All of the steps were performed on a mac device, but should work fine on linux too.
 
+## Completed Features
+
+* SSH
+* VNC
+
+## Current WIP Feature
+
+* Android Emulator
+
 
 ## Sample Build Instructions:
 
