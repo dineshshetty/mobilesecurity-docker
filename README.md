@@ -8,6 +8,9 @@ All of the steps were performed on a mac device, but should work fine on linux t
 
 * SSH
 * VNC
+* JAVA
+* Android SDK
+
 
 ## Current WIP Feature
 
