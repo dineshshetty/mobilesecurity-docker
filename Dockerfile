@@ -28,7 +28,7 @@ ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
 RUN apt-get install -y net-tools
 
 # Installing some required softwares
-RUN apt-get install -y unzip wget tar firefox
+RUN apt-get install -y unzip wget tar firefox curl
 
 # Install and configure supervisor
 RUN apt-get install -y supervisor
@@ -118,16 +118,15 @@ RUN echo 'y' | /tools/android-sdk/tools/bin/sdkmanager "emulator" "platform-tool
 # RUN /tools/android-sdk/tools/bin/sdkmanager "ndk-bundle" "extras;google;google_play_services" \
 # "extras;android;m2repository" "extras;google;m2repository"
 
-# Setup SDK for running Android API 28
-RUN echo 'y' | /tools/android-sdk/tools/bin/sdkmanager "platforms;android-28" "sources;android-28" \
+# Setup SDK for running Android API 28 x86. Disabled for time being.
+#RUN echo 'y' | /tools/android-sdk/tools/bin/sdkmanager "platforms;android-28" "sources;android-28" \
 	"system-images;android-28;google_apis;x86"
 
 # Enable only if required
 # RUN echo 'y' | /tools/android-sdk/tools/bin/sdkmanager "system-images;android-28;google_apis;x86_64"
 
-# Creating a new AVD
-RUN echo "no" | /tools/android-sdk/tools/bin/avdmanager create avd -n "Android-API29-x86" --abi google_apis/x86 --package 'system-images;android-28;google_apis;x86' --device "Nexus 5X" --force
-RUN /tools/android-sdk/tools/bin/avdmanager list avd
+# Creating a new x86 AVD. Disabled for time being.
+#RUN echo "no" | /tools/android-sdk/tools/bin/avdmanager create avd -n "Android-API29-x86" --abi google_apis/x86 --package 'system-images;android-28;google_apis;x86' --device "Nexus 5X" --force
 
 # Launch the newly created AVD
 #RUN /tools/android-sdk/emulator/emulator -avd "Android-API29-x86" -noaudio -no-boot-anim -gpu off
@@ -141,7 +140,6 @@ RUN echo "no" | /tools/android-sdk/tools/bin/avdmanager create avd -n armTestDev
 
 ENV QT_XKB_CONFIG_ROOT /usr/share/X11/xkb
 ENV PATH $PATH:$QT_XKB_CONFIG_ROOT
-
 
 
 EXPOSE 5554
