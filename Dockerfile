@@ -12,6 +12,7 @@ ENV SSHPASS "Dinesh@123!"
 # Software Versions
 ENV ANDROID_SDK_VERSION "4333796"
 ENV ANDROID_BUILD_TOOLS_VERSION "28.0.3"
+ENV DROZER_VERSION "2.4.4"
 
 
 # Update Ubuntu Software repository
@@ -151,8 +152,8 @@ EXPOSE 5037
 
 # Setup Drozer
 RUN mkdir /tools/drozer
-RUN wget -c https://github.com/mwrlabs/drozer/releases/download/2.4.4/drozer_2.4.4.deb -O /tools/drozer/drozer_2.4.4.deb
-RUN apt-get install -y /tools/drozer/drozer_2.4.4.deb
+RUN wget -c https://github.com/mwrlabs/drozer/releases/download/$DROZER_VERSION/drozer_$DROZER_VERSION.deb -O /tools/drozer/drozer_$DROZER_VERSION.deb
+RUN apt-get install -y /tools/drozer/drozer_$DROZER_VERSION.deb
 EXPOSE 31415
 
 
