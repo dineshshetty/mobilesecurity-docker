@@ -13,6 +13,7 @@ All of the steps were performed on a mac device, but should work fine on linux t
 * Android Emulator and AVD - ARM
 * ADB
 * Ability to ADB into Emulator running on base Mac OS
+* Drozer
 
 
 ## Current WIP Feature

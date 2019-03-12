@@ -2,6 +2,9 @@
 FROM ubuntu:18.04
 LABEL MAINTAINER Dinesh Shetty <dinezh.shetty@gmail.com>
 
+# To handle automatic installations
+ENV DEBIAN_FRONTEND=noninteractive
+
 # Setup variables
 ENV VNCPASSWORD "Dinesh@123!"
 ENV SSHPASS "Dinesh@123!"
@@ -28,7 +31,7 @@ ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
 RUN apt-get install -y net-tools
 
 # Installing some required softwares
-RUN apt-get install -y unzip wget tar firefox curl
+RUN apt-get install -y unzip wget tar firefox curl python-setuptools python-pip
 
 # Install and configure supervisor
 RUN apt-get install -y supervisor
@@ -120,7 +123,7 @@ RUN echo 'y' | /tools/android-sdk/tools/bin/sdkmanager "emulator" "platform-tool
 
 # Setup SDK for running Android API 28 x86. Disabled for time being.
 #RUN echo 'y' | /tools/android-sdk/tools/bin/sdkmanager "platforms;android-28" "sources;android-28" \
-	"system-images;android-28;google_apis;x86"
+#	"system-images;android-28;google_apis;x86"
 
 # Enable only if required
 # RUN echo 'y' | /tools/android-sdk/tools/bin/sdkmanager "system-images;android-28;google_apis;x86_64"
@@ -145,6 +148,13 @@ ENV PATH $PATH:$QT_XKB_CONFIG_ROOT
 EXPOSE 5554
 EXPOSE 5555
 EXPOSE 5037
+
+# Setup Drozer
+RUN mkdir /tools/drozer
+RUN wget -c https://github.com/mwrlabs/drozer/releases/download/2.4.4/drozer_2.4.4.deb -O /tools/drozer/drozer_2.4.4.deb
+RUN apt-get install -y /tools/drozer/drozer_2.4.4.deb
+EXPOSE 31415
+
 
 # Setup workdirectory
 RUN mkdir -p /workdirectory
