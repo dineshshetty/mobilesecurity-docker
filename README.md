@@ -15,6 +15,9 @@ All of the steps were performed on a mac device, but should work fine on linux t
 * Ability to ADB into Emulator running on base Mac OS
 * Drozer v2.4.4
 * Apktool v2.4.0
+* Simplify
+* APKiD
+* Kwetza
 
 
 ## Current WIP Feature

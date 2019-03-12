@@ -14,6 +14,7 @@ ENV ANDROID_SDK_VERSION "4333796"
 ENV ANDROID_BUILD_TOOLS_VERSION "28.0.3"
 ENV DROZER_VERSION "2.4.4"
 ENV APKTOOL_VERSION 2.4.0"
+ENV SIMPLIFY_VERSION "1.2.1"
 
 
 # Update Ubuntu Software repository
@@ -33,7 +34,7 @@ ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
 RUN apt-get install -y net-tools
 
 # Installing some required softwares
-RUN apt-get install -y unzip wget tar firefox curl python-setuptools python-pip
+RUN apt-get install -y unzip wget tar firefox curl python-setuptools python-pip build-essential
 
 # Install and configure supervisor
 RUN apt-get install -y supervisor
@@ -166,8 +167,21 @@ RUN wget -qO -c https://raw.githubusercontent.com/iBotPeaches/Apktool/master/scr
 RUN chmod +x /tools/apktool/apktool
 ENV PATH $PATH:/tools/apktool/apktool
 
+# Setup APKiD
+RUN mkdir /tools/apkid
+RUN git clone --recursive https://github.com/rednaga/yara-python-1 /tools/apkid/yara-python
+RUN cd /tools/apkid/yara-python && python setup.py build --enable-dex install
+RUN pip install apkid
 
-RUN apt-get install -y /tools/drozer/drozer_$DROZER_VERSION.deb
+
+# Setup Simplify
+RUN mkdir /tools/simplify
+RUN wget -qO -c https://github.com/CalebFenton/simplify/releases/download/v$SIMPLIFY_VERSION/simplify-$SIMPLIFY_VERSION.jar -O /tools/simplify/simplify.jar
+RUN wget -qO -c https://github.com/CalebFenton/simplify/blob/master/simplify/obfuscated-app.apk?raw=true -O /tools/simplify/obfuscated-app.apk
+
+# Setup Kwetza
+RUN pip install beautifulsoup4
+RUN git clone https://github.com/sensepost/kwetza.git /tools/kwetza
 
 
 
