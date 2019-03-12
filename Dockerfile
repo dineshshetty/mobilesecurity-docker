@@ -13,6 +13,7 @@ ENV SSHPASS "Dinesh@123!"
 ENV ANDROID_SDK_VERSION "4333796"
 ENV ANDROID_BUILD_TOOLS_VERSION "28.0.3"
 ENV DROZER_VERSION "2.4.4"
+ENV APKTOOL_VERSION 2.4.0"
 
 
 # Update Ubuntu Software repository
@@ -155,6 +156,19 @@ RUN mkdir /tools/drozer
 RUN wget -c https://github.com/mwrlabs/drozer/releases/download/$DROZER_VERSION/drozer_$DROZER_VERSION.deb -O /tools/drozer/drozer_$DROZER_VERSION.deb
 RUN apt-get install -y /tools/drozer/drozer_$DROZER_VERSION.deb
 EXPOSE 31415
+RUN echo 'adb forward tcp:31415 tcp:31415'
+
+# Setup Apktool
+RUN mkdir /tools/apktool
+RUN wget -qO -c https://bitbucket.org/iBotPeaches/apktool/downloads/apktool_$APKTOOL_VERSION.jar -O /tools/apktool/apktool.jar
+RUN chmod +x /tools/apktool/apktool.jar
+RUN wget -qO -c https://raw.githubusercontent.com/iBotPeaches/Apktool/master/scripts/linux/apktool -O /tools/apktool/apktool
+RUN chmod +x /tools/apktool/apktool
+ENV PATH $PATH:/tools/apktool/apktool
+
+
+RUN apt-get install -y /tools/drozer/drozer_$DROZER_VERSION.deb
+
 
 
 # Setup workdirectory
